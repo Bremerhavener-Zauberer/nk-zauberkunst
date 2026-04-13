@@ -17,6 +17,11 @@ const KB = {
   telefon:     '+49 156 78469675',
   instagram:   'https://www.instagram.com/zauberer_nico?igsh=MXZudGdjbmZudHExbQ==',
   buchung:     'https://www.sumupbookings.com/zauberkunstler',
+  whatsapp:    'https://wa.me/4915678469675',
+  wakanal:     'https://whatsapp.com/channel/0029Va9Gj7Y6LwHoOMuSMP1g',
+  preisAb:     '100',
+  reisekosten: '0,30',
+  zahlung:     ['Kartenzahlung', 'Barzahlung'],
   leistungen:  ['Close-Up Magic', 'Street Magic'],
   zielgruppen: ['Firmen', 'Privatkunden', 'Hochzeiten', 'Geburtstage', 'Stadtfeste', 'Messen'],
   auftritte:   '500+',
@@ -72,13 +77,25 @@ const RESPONSES = [
   // --- Preise ---
   {
     keywords: ['preis', 'kosten', 'honorar', 'was kostet', 'wie viel', 'wieviel', 'tarif', 'gebühr', 'bezahlen', 'euro', 'budget'],
-    answer: () => `Die Honorare von Nicolas variieren je nach:\n• Art der Veranstaltung\n• Dauer des Auftritts\n• Reiseaufwand\n\nFür ein **individuelles Angebot** einfach eine unverbindliche Anfrage stellen – Nicolas meldet sich innerhalb von 24 Stunden:\n\n📅 [Jetzt anfragen](${KB.buchung})\n📧 [${KB.email}](mailto:${KB.email})`
+    answer: () => `Die Preise starten **ab ca. ${KB.preisAb} €** – je nach Art der Veranstaltung, Dauer und Reiseaufwand. 💰\n\n📍 **Reisekosten:** Für Auftritte außerhalb von Bremerhaven werden ca. **${KB.reisekosten} € pro Kilometer** (An- und Abfahrt) berechnet.\n\n💳 **Zahlung:** Sowohl **Kartenzahlung als auch Barzahlung** sind möglich.\n\nFür ein **individuelles Angebot** einfach anfragen – Antwort innerhalb von 24 Stunden:\n\n📅 [Jetzt anfragen](${KB.buchung})\n📧 [${KB.email}](mailto:${KB.email})\n💬 [WhatsApp](${KB.whatsapp})`
+  },
+
+  // --- Zahlung ---
+  {
+    keywords: ['zahlung', 'zahlen', 'karte', 'kartenzahlung', 'bar', 'barzahlung', 'cash', 'überweisung', 'paypal', 'bezahlen'],
+    answer: () => `Kein Problem! Nicolas akzeptiert:\n\n💳 **Kartenzahlung** (EC- & Kreditkarte)\n💵 **Barzahlung**\n\nBeide Optionen sind vor Ort möglich. Bei Fragen zur Abrechnung einfach kurz anfragen:\n\n💬 [WhatsApp](${KB.whatsapp})\n📧 [${KB.email}](mailto:${KB.email})`
+  },
+
+  // --- Reisekosten ---
+  {
+    keywords: ['reisekosten', 'fahrtkosten', 'kilometer', 'anfahrt', 'abfahrt', 'entfernung', 'km', 'fahrt'],
+    answer: () => `Für Auftritte **außerhalb von Bremerhaven** werden Reisekosten von ca. **${KB.reisekosten} € pro Kilometer** (An- und Abfahrt) berechnet. 🚗\n\nDie genauen Kosten werden individuell besprochen. Einfach anfragen:\n\n📅 [Jetzt anfragen](${KB.buchung})\n💬 [WhatsApp](${KB.whatsapp})`
   },
 
   // --- Buchung ---
   {
     keywords: ['buchen', 'buchung', 'anfrage', 'reservieren', 'termin', 'anfragen', 'beauftragen', 'engagieren', 'wie kann ich'],
-    answer: () => `Eine Buchung ist ganz einfach! 📅\n\n**Option 1:** Direkt online buchen:\n→ [Buchungsformular öffnen](${KB.buchung})\n\n**Option 2:** Kontakt aufnehmen:\n📧 [${KB.email}](mailto:${KB.email})\n📞 [${KB.telefon}](tel:+4915678469675)\n\nNicolas meldet sich innerhalb von **24 Stunden** mit einem individuellen Angebot.`
+    answer: () => `Eine Buchung ist ganz einfach! 📅\n\n**Option 1:** Direkt online buchen:\n→ [Buchungsformular öffnen](${KB.buchung})\n\n**Option 2:** Per WhatsApp:\n💬 [Jetzt auf WhatsApp schreiben](${KB.whatsapp})\n\n**Option 3:** Kontakt aufnehmen:\n📧 [${KB.email}](mailto:${KB.email})\n📞 [${KB.telefon}](tel:+4915678469675)\n\nNicolas meldet sich innerhalb von **24 Stunden** mit einem individuellen Angebot.`
   },
 
   // --- Verfügbarkeit / Vorlaufzeit ---
@@ -119,8 +136,14 @@ const RESPONSES = [
 
   // --- Kontakt ---
   {
-    keywords: ['kontakt', 'erreichen', 'schreiben', 'email', 'mail', 'telefon', 'anrufen', 'nachricht', 'melden'],
-    answer: () => `Du erreichst Nicolas so:\n\n📧 E-Mail: [${KB.email}](mailto:${KB.email})\n📞 Telefon: [${KB.telefon}](tel:+4915678469675)\n📅 Online buchen: [Buchungsformular](${KB.buchung})\n📸 Instagram: [@zauberer_nico](${KB.instagram})\n\nNicolas meldet sich innerhalb von **24 Stunden**!`
+    keywords: ['kontakt', 'erreichen', 'schreiben', 'email', 'mail', 'telefon', 'anrufen', 'nachricht', 'melden', 'kontaktieren'],
+    answer: () => `Du erreichst Nicolas so:\n\n💬 WhatsApp: [Jetzt schreiben](${KB.whatsapp})\n📧 E-Mail: [${KB.email}](mailto:${KB.email})\n📞 Telefon: [${KB.telefon}](tel:+4915678469675)\n📅 Online buchen: [Buchungsformular](${KB.buchung})\n📸 Instagram: [@zauberer_nico](${KB.instagram})\n\nNicolas meldet sich innerhalb von **24 Stunden**!`
+  },
+
+  // --- WhatsApp ---
+  {
+    keywords: ['whatsapp', 'wa', 'chat', 'nachricht schreiben', 'direkt schreiben', 'kanal'],
+    answer: () => `Klar! Du kannst Nicolas direkt per WhatsApp erreichen:\n\n💬 [Jetzt auf WhatsApp schreiben](${KB.whatsapp})\n\nOder folge dem **WhatsApp-Kanal** für aktuelle Infos & Einblicke hinter die Kulissen:\n📢 [Kanal folgen](${KB.wakanal})\n\nNicolas antwortet in der Regel sehr schnell! 😊`
   },
 
   // --- Instagram / Social Media ---
@@ -160,7 +183,7 @@ const QUICK_SUGGESTIONS = [
   'Was kostet ein Auftritt?',
   'Wie kann ich buchen?',
   'Welche Leistungen gibt es?',
-  'Bist du deutschlandweit buchbar?',
+  'Per WhatsApp kontaktieren',
   'Für Firmenevents geeignet?',
 ];
 
