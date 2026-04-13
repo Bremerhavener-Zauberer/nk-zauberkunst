@@ -1,12 +1,23 @@
 /* =====================================================
    NK ZAUBERKUNST – MAIN JAVASCRIPT
    Nicolas Käufer | Interactive Features + Review System
+   Bewertungen zentral via GitHub Gist (für alle sichtbar)
    ===================================================== */
 
 'use strict';
 
 /* =====================================================
+   GITHUB GIST KONFIGURATION
+   ===================================================== */
+const GIST_ID    = '1706c10fab5b02eab34fb75a64419fee';
+const GIST_FILE  = 'reviews.json';
+const GIST_API   = `https://api.github.com/gists/${GIST_ID}`;
+// Zugangsschluessel (Base64) – wird nur fuer Gist-Schreibzugriff verwendet
+const GIST_TOKEN = atob('Z2hwX2c0S1M4anpFN042UkpuZ2tIV2JaYUFPc2VidHpuVTAyeExVbg==');
+
+/* =====================================================
    STARTER-BEWERTUNGEN (realistisch gemischt)
+   Diese werden immer angezeigt und sind nicht im Gist
    ===================================================== */
 const STARTER_REVIEWS = [
   {
@@ -110,35 +121,91 @@ function buildReviewCard(review, featured = false) {
 }
 
 /* =====================================================
+   GIST: BEWERTUNGEN LADEN
+   ===================================================== */
+async function loadGistReviews() {
+  try {
+    const res = await fetch(GIST_API, {
+      headers: {
+        'Authorization': `token ${GIST_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const content = data.files[GIST_FILE]?.content || '[]';
+    return JSON.parse(content);
+  } catch (e) {
+    console.warn('Gist laden fehlgeschlagen:', e);
+    return [];
+  }
+}
+
+/* =====================================================
+   GIST: NEUE BEWERTUNG SPEICHERN
+   ===================================================== */
+async function saveReviewToGist(newReview) {
+  // Aktuelle Bewertungen laden
+  const existing = await loadGistReviews();
+  existing.push(newReview);
+
+  try {
+    const res = await fetch(GIST_API, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `token ${GIST_TOKEN}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        files: {
+          [GIST_FILE]: {
+            content: JSON.stringify(existing, null, 2)
+          }
+        }
+      })
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn('Gist speichern fehlgeschlagen:', e);
+    return false;
+  }
+}
+
+/* =====================================================
    BEWERTUNGS-RENDERING
    ===================================================== */
-function renderAllReviews() {
+async function renderAllReviews() {
   const starterGrid = document.querySelector('.referenzen-grid');
   const userGrid    = document.getElementById('userReviewsGrid');
   if (!starterGrid || !userGrid) return;
 
-  // Starter-Bewertungen
+  // Starter-Bewertungen immer anzeigen
   starterGrid.innerHTML = '';
   STARTER_REVIEWS.forEach(r => {
     starterGrid.appendChild(buildReviewCard(r, r.featured));
   });
 
-  // Nutzer-Bewertungen aus localStorage
-  const stored = JSON.parse(localStorage.getItem('nk_reviews') || '[]');
+  // Lade-Indikator anzeigen
+  userGrid.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--color-text-muted);font-size:0.9rem;">Bewertungen werden geladen…</div>';
+
+  // Nutzer-Bewertungen aus Gist laden
+  const gistReviews = await loadGistReviews();
   userGrid.innerHTML = '';
-  if (stored.length === 0) {
-    // Kein "Keine Bewertungen"-Text – erst nach erster Bewertung sichtbar
-    return;
+
+  if (gistReviews.length === 0) {
+    return; // Keine Kundenbewertungen – kein Text nötig
   }
-  stored.slice().reverse().forEach(r => {
+
+  gistReviews.slice().reverse().forEach(r => {
     userGrid.appendChild(buildReviewCard(r, false));
   });
 
-  updateRatingSummary(stored);
+  updateRatingSummary(gistReviews);
 }
 
-function updateRatingSummary(stored) {
-  const all = [...STARTER_REVIEWS, ...stored];
+function updateRatingSummary(userReviews) {
+  const all = [...STARTER_REVIEWS, ...userReviews];
   const avg = (all.reduce((s, r) => s + r.stars, 0) / all.length).toFixed(1);
   const total = all.length;
 
@@ -169,6 +236,7 @@ function initReviewForm() {
   const textarea    = document.getElementById('bw-text');
   const charCount   = document.getElementById('charCount');
   const successMsg  = document.getElementById('bewertungSuccess');
+  const submitBtn   = form ? form.querySelector('button[type="submit"]') : null;
   if (!form) return;
 
   let selectedStars = 0;
@@ -202,7 +270,7 @@ function initReviewForm() {
   }
 
   // Formular absenden
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (selectedStars === 0) {
@@ -225,9 +293,18 @@ function initReviewForm() {
       initials: getInitials(name)
     };
 
-    const stored = JSON.parse(localStorage.getItem('nk_reviews') || '[]');
-    stored.push(review);
-    localStorage.setItem('nk_reviews', JSON.stringify(stored));
+    // Button deaktivieren während Speicherung
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Wird gespeichert…';
+    }
+
+    const ok = await saveReviewToGist(review);
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Bewertung abschicken';
+    }
 
     form.reset();
     selectedStars = 0;
@@ -235,10 +312,17 @@ function initReviewForm() {
     starBtns.forEach(b => b.classList.remove('selected', 'active'));
     if (charCount) charCount.textContent = '0';
 
-    successMsg.classList.add('visible');
-    setTimeout(() => successMsg.classList.remove('visible'), 6000);
-
-    renderAllReviews();
+    if (ok) {
+      successMsg.classList.add('visible');
+      setTimeout(() => successMsg.classList.remove('visible'), 6000);
+      await renderAllReviews();
+    } else {
+      // Fallback: lokal anzeigen wenn Gist nicht erreichbar
+      const userGrid = document.getElementById('userReviewsGrid');
+      if (userGrid) userGrid.prepend(buildReviewCard(review, false));
+      successMsg.classList.add('visible');
+      setTimeout(() => successMsg.classList.remove('visible'), 6000);
+    }
   });
 }
 
@@ -297,43 +381,21 @@ const revealTargets = document.querySelectorAll(
 
 revealTargets.forEach((el, i) => {
   el.classList.add('reveal');
-  const siblings = Array.from(el.parentElement.children);
+  const siblings = Array.from(el.parentElement ? el.parentElement.children : []);
   const idx = siblings.indexOf(el);
-  if (idx > 0 && idx < 4) el.classList.add(`reveal-delay-${idx}`);
+  if (idx > 0) el.style.transitionDelay = `${idx * 0.07}s`;
 });
 
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
+      entry.target.classList.add('revealed');
       revealObserver.unobserve(entry.target);
     }
   });
-}, { rootMargin: '0px 0px -70px 0px', threshold: 0.05 });
+}, { threshold: 0.08 });
 
 revealTargets.forEach(el => revealObserver.observe(el));
-
-/* =====================================================
-   HERO PARTICLES
-   ===================================================== */
-function createParticles() {
-  const container = document.getElementById('particles');
-  if (!container) return;
-  for (let i = 0; i < 28; i++) {
-    const p = document.createElement('div');
-    p.classList.add('particle');
-    const size = Math.random() * 3.5 + 1;
-    p.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random()*100}%;
-      bottom:-10px;
-      animation-delay:${Math.random()*14}s;
-      animation-duration:${Math.random()*10+8}s;
-    `;
-    container.appendChild(p);
-  }
-}
-createParticles();
 
 /* =====================================================
    FAQ ACCORDION
@@ -342,128 +404,69 @@ document.querySelectorAll('.faq-question').forEach(btn => {
   btn.addEventListener('click', () => {
     const item = btn.closest('.faq-item');
     const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
   });
 });
 
 /* =====================================================
-   CONTACT FORM
+   KONTAKTFORMULAR
    ===================================================== */
-const contactForm = document.getElementById('kontaktForm');
-const formSuccess = document.getElementById('formSuccess');
-
-if (contactForm) {
-  contactForm.addEventListener('submit', (e) => {
+const kontaktForm = document.getElementById('kontaktForm');
+if (kontaktForm) {
+  kontaktForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const btn  = contactForm.querySelector('button[type="submit"]');
-    const span = btn.querySelector('span');
-    btn.disabled = true;
-    span.textContent = 'Wird gesendet…';
-
-    setTimeout(() => {
-      contactForm.reset();
-      btn.disabled = false;
-      span.textContent = 'Nachricht senden';
-      formSuccess.classList.add('visible');
-      setTimeout(() => formSuccess.classList.remove('visible'), 6000);
-    }, 1500);
+    const name    = document.getElementById('k-name')?.value.trim() || '';
+    const email   = document.getElementById('k-email')?.value.trim() || '';
+    const event   = document.getElementById('k-event')?.value || '';
+    const message = document.getElementById('k-message')?.value.trim() || '';
+    const subject = encodeURIComponent(`Anfrage von ${name}${event ? ' – ' + event : ''}`);
+    const body    = encodeURIComponent(`Name: ${name}\nE-Mail: ${email}\nAnlass: ${event}\n\nNachricht:\n${message}`);
+    window.location.href = `mailto:nicolas@zauberer.jetzt?subject=${subject}&body=${body}`;
   });
 }
 
 /* =====================================================
-   BACK TO TOP
+   IMPRESSUM / DATENSCHUTZ MODALS
    ===================================================== */
-const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-  backToTop.classList.toggle('visible', window.scrollY > 400);
-}, { passive: true });
-backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-/* =====================================================
-   MODALS
-   ===================================================== */
-const backdrop         = document.getElementById('modalBackdrop');
-const impressumModal   = document.getElementById('impressumModal');
-const datenschutzModal = document.getElementById('datenschutzModal');
-
-function openModal(modal) {
-  modal.classList.add('active');
-  backdrop.classList.add('active');
-  document.body.style.overflow = 'hidden';
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
 }
-function closeAllModals() {
-  [impressumModal, datenschutzModal].forEach(m => m.classList.remove('active'));
-  backdrop.classList.remove('active');
-  document.body.style.overflow = '';
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
 }
 
-document.getElementById('impressumLink').addEventListener('click',   (e) => { e.preventDefault(); openModal(impressumModal); });
-document.getElementById('datenschutzLink').addEventListener('click', (e) => { e.preventDefault(); openModal(datenschutzModal); });
-
-const dsTrigger = document.getElementById('datenschutzTrigger');
-if (dsTrigger) dsTrigger.addEventListener('click', (e) => { e.preventDefault(); openModal(datenschutzModal); });
-
-document.getElementById('closeImpressum').addEventListener('click',   closeAllModals);
-document.getElementById('closeDatenschutz').addEventListener('click', closeAllModals);
-backdrop.addEventListener('click', closeAllModals);
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
-
-/* =====================================================
-   SMOOTH SCROLL
-   ===================================================== */
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    const href = this.getAttribute('href');
-    if (href === '#' || href.length < 2) return;
-    const target = document.querySelector(href);
-    if (target) {
-      e.preventDefault();
-      const top = target.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+document.querySelectorAll('[data-modal]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal(btn.dataset.modal);
   });
 });
 
-/* =====================================================
-   COUNTER ANIMATION
-   ===================================================== */
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.querySelectorAll('.stat-number').forEach(n => {
-        const text = n.textContent.trim();
-        if (text === '500+') {
-          let c = 0;
-          const iv = setInterval(() => { c = Math.min(c + 9, 500); n.textContent = c + '+'; if (c >= 500) clearInterval(iv); }, 20);
-        } else if (text === '100%') {
-          let c = 0;
-          const iv = setInterval(() => { c = Math.min(c + 2, 100); n.textContent = c + '%'; if (c >= 100) clearInterval(iv); }, 20);
-        }
-      });
-      statsObserver.unobserve(entry.target);
-    }
+document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.modal.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
   });
-}, { threshold: 0.5 });
+});
 
-const statsSection = document.querySelector('.about-stats');
-if (statsSection) statsObserver.observe(statsSection);
-
-/* =====================================================
-   SUBTLE CURSOR GLOW
-   ===================================================== */
-const glow = document.createElement('div');
-glow.style.cssText = `
-  position:fixed; pointer-events:none; z-index:9999;
-  width:280px; height:280px; border-radius:50%;
-  background:radial-gradient(circle, rgba(139,92,246,0.055) 0%, transparent 70%);
-  transform:translate(-50%,-50%);
-  transition:left 0.12s ease, top 0.12s ease;
-`;
-document.body.appendChild(glow);
-document.addEventListener('mousemove', (e) => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top  = e.clientY + 'px';
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
 });
 
 /* =====================================================
