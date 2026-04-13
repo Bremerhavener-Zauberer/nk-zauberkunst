@@ -7,6 +7,7 @@
   <meta name="keywords" content="Zauberer, Close-Up Magic, Street Magic, Nicolas Käufer, Firmenveranstaltung, Hochzeit, Zauberkünstler, Bremerhaven, Deutschland" />
   <title>Nicolas Käufer – Zauberkünstler</title>
   <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/chatbot.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -661,6 +662,58 @@
     </svg>
   </button>
 
+  <!-- ===================== CHATBOT ===================== -->
+  <div id="chatbot-widget">
+
+    <!-- Toggle Button -->
+    <button id="chatbot-toggle" aria-label="Chat öffnen" title="Frag mich etwas!">
+      <span id="chatbot-icon-open">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span id="chatbot-icon-close" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span id="chatbot-badge" class="chatbot-badge">1</span>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatbot-window" aria-live="polite">
+      <div id="chatbot-header">
+        <div class="chatbot-header-info">
+          <div class="chatbot-avatar">NK</div>
+          <div>
+            <strong>Nicolas' Assistent</strong>
+            <span class="chatbot-status"><span class="chatbot-dot"></span>Online</span>
+          </div>
+        </div>
+        <button id="chatbot-close-btn" aria-label="Chat schließen">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="chatbot-messages"></div>
+
+      <div id="chatbot-suggestions"></div>
+
+      <div id="chatbot-input-area">
+        <input type="text" id="chatbot-input" placeholder="Deine Frage..." maxlength="200" autocomplete="off" />
+        <button id="chatbot-send" aria-label="Senden">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/chatbot.js"></script>
 </body>
 </html>
