@@ -231,90 +231,78 @@
       </div>
       <div class="referenzen-grid">
 
-        <div class="referenz-card">
-          <div class="referenz-stars">★★★★★</div>
-          <blockquote>
-            „Nicolas hat unsere Weihnachtsfeier in ein unvergessliches Erlebnis verwandelt. Die Mitarbeiter sprechen noch heute davon. Absolute Buchungsempfehlung!"
-          </blockquote>
-          <div class="referenz-author">
-            <div class="referenz-avatar">MK</div>
-            <div>
-              <strong>Markus Keller</strong>
-              <span>Geschäftsführer, TechCorp GmbH</span>
+        <!-- Starter-Bewertungen werden per JS eingefügt -->
+
+      </div>
+
+      <!-- Dynamische Kundenbewertungen -->
+      <div id="userReviewsWrap" style="margin-top:2.5rem;">
+        <div id="userReviewsGrid" class="referenzen-grid"></div>
+      </div>
+
+      <!-- Bewertung schreiben -->
+      <div class="bewertung-section">
+        <div class="section-header" style="margin-top:4rem;">
+          <span class="section-label">Deine Meinung zählt</span>
+          <h2 class="section-title">Bewertung hinterlassen</h2>
+          <div class="section-divider"></div>
+          <p class="section-desc">Du warst bei einer meiner Veranstaltungen dabei? Ich freue mich über dein Feedback!</p>
+        </div>
+        <form class="bewertung-form" id="bewertungForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bw-name">Dein Name *</label>
+              <input type="text" id="bw-name" name="name" required placeholder="Max Mustermann" maxlength="60" />
+            </div>
+            <div class="form-group">
+              <label for="bw-anlass">Anlass</label>
+              <select id="bw-anlass" name="anlass">
+                <option value="" disabled selected>Bitte wählen</option>
+                <option value="Firmenveranstaltung">Firmenveranstaltung</option>
+                <option value="Hochzeit">Hochzeit</option>
+                <option value="Geburtstag">Geburtstag / Jubiläum</option>
+                <option value="Stadtfest">Stadtfest / Outdoor</option>
+                <option value="Privatfeier">Privatfeier</option>
+                <option value="Sonstiges">Sonstiges</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="referenz-card referenz-featured">
-          <div class="referenz-stars">★★★★★</div>
-          <blockquote>
-            „Die Close-Up-Magie auf unserer Hochzeit war der absolute Höhepunkt! Alle Gäste waren begeistert und konnten es nicht fassen. Nicolas ist ein echter Profi mit Herz."
-          </blockquote>
-          <div class="referenz-author">
-            <div class="referenz-avatar">SL</div>
-            <div>
-              <strong>Sarah &amp; Lukas</strong>
-              <span>Hochzeitspaar, Hamburg</span>
+          <div class="form-group">
+            <label>Bewertung *</label>
+            <div class="star-picker" id="starPicker" role="group" aria-label="Sterne-Bewertung">
+              <button type="button" class="star-btn" data-value="1" aria-label="1 Stern">★</button>
+              <button type="button" class="star-btn" data-value="2" aria-label="2 Sterne">★</button>
+              <button type="button" class="star-btn" data-value="3" aria-label="3 Sterne">★</button>
+              <button type="button" class="star-btn" data-value="4" aria-label="4 Sterne">★</button>
+              <button type="button" class="star-btn" data-value="5" aria-label="5 Sterne">★</button>
             </div>
+            <input type="hidden" id="bw-stars" name="stars" value="0" />
           </div>
-        </div>
-
-        <div class="referenz-card">
-          <div class="referenz-stars">★★★★★</div>
-          <blockquote>
-            „Wir haben Nicolas für unser Stadtfest gebucht und er hat die Besucher stundenlang in seinen Bann gezogen. Professionell, charmant und unglaublich talentiert."
-          </blockquote>
-          <div class="referenz-author">
-            <div class="referenz-avatar">AW</div>
-            <div>
-              <strong>Andrea Weiß</strong>
-              <span>Eventmanagerin, Stadtmarketing</span>
-            </div>
+          <div class="form-group">
+            <label for="bw-text">Dein Erfahrungsbericht *</label>
+            <textarea id="bw-text" name="text" required rows="4" maxlength="500" placeholder="Beschreibe deine Erfahrung mit Nicolas..."></textarea>
+            <span class="char-counter"><span id="charCount">0</span>/500</span>
           </div>
-        </div>
-
-        <div class="referenz-card">
-          <div class="referenz-stars">★★★★★</div>
-          <blockquote>
-            „Die Close-Up-Magie beim Galadinner war atemberaubend. Unsere Kunden waren völlig fasziniert. Nicolas versteht es, eine Atmosphäre zu schaffen, die lange nachhallt."
-          </blockquote>
-          <div class="referenz-author">
-            <div class="referenz-avatar">PH</div>
-            <div>
-              <strong>Peter Hoffmann</strong>
-              <span>Eventleiter, Luxury Hotels AG</span>
-            </div>
+          <div class="form-group form-checkbox">
+            <label class="checkbox-label">
+              <input type="checkbox" id="bw-consent" required />
+              <span>Ich stimme zu, dass meine Bewertung auf dieser Website öffentlich angezeigt wird.</span>
+            </label>
           </div>
-        </div>
-
-        <div class="referenz-card">
-          <div class="referenz-stars">★★★★★</div>
-          <blockquote>
-            „Zum 50. Geburtstag meines Mannes war Nicolas der perfekte Überraschungsgast. Er hat alle Altersgruppen begeistert – von den Kindern bis zu den Großeltern!"
-          </blockquote>
-          <div class="referenz-author">
-            <div class="referenz-avatar">CM</div>
-            <div>
-              <strong>Christine Müller</strong>
-              <span>Privatkundin, Bremen</span>
-            </div>
+          <button type="submit" class="btn btn-primary" id="bewertungSubmitBtn">
+            <span>Bewertung absenden</span>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="form-success" id="bewertungSuccess">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Vielen Dank für deine Bewertung! Sie ist jetzt sichtbar.
           </div>
-        </div>
-
-        <div class="referenz-card">
-          <div class="referenz-stars">★★★★★</div>
-          <blockquote>
-            „Unsere Produktmesse wurde durch Nicolas' Auftritte zu einem echten Erlebnis. Er hat Besucher angelockt und für Gesprächsstoff gesorgt. Top-Investition!"
-          </blockquote>
-          <div class="referenz-author">
-            <div class="referenz-avatar">JB</div>
-            <div>
-              <strong>Julia Braun</strong>
-              <span>Marketing, InnovateTech AG</span>
-            </div>
-          </div>
-        </div>
-
+        </form>
       </div>
 
       <div class="partner-section">
@@ -595,27 +583,81 @@
   </footer>
 
   <!-- ===================== IMPRESSUM MODAL ===================== -->
-  <div class="modal" id="impressumModal">
+  <div class="modal modal-large" id="impressumModal">
     <div class="modal-content">
       <button class="modal-close" id="closeImpressum">&times;</button>
       <h2>Impressum</h2>
+
       <p><strong>Angaben gemäß § 5 TMG</strong></p>
-      <p>Nicolas Käufer<br/>Zauberkünstler<br/>[Straße und Hausnummer]<br/>[PLZ] Bremerhaven</p>
+      <p>
+        Nicolas Käufer<br/>
+        Zauberkünstler (freiberuflich tätig)<br/>
+        Bremerhaven, Deutschland
+      </p>
+      <p class="modal-note">Hinweis: Als mobil tätiger Freiberufler ohne feste Betriebsstätte oder Ladenlokal bin ich gemäß § 5 Abs. 1 Nr. 1 TMG i. V. m. § 15a GewO berechtigt, anstelle einer postalischen Anschrift ausschließlich eine erreichbare Kontaktadresse anzugeben. Eine ladungsfähige Anschrift wird auf begründete Anfrage unverzüglich mitgeteilt.</p>
+
       <p><strong>Kontakt</strong><br/>
       Telefon: +49 156 78469675<br/>
-      E-Mail: nicolas@zauberer.jetzt</p>
-      <p><em>Bitte ergänze deine vollständige Adresse und ggf. Steuernummer.</em></p>
+      E-Mail: <a href="mailto:nicolas@zauberer.jetzt">nicolas@zauberer.jetzt</a></p>
+
+      <p><strong>Umsatzsteuer</strong><br/>
+      Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleinunternehmerregelung).</p>
+
+      <p><strong>Berufsbezeichnung und berufsrechtliche Regelungen</strong><br/>
+      Berufsbezeichnung: Zauberkünstler / Unterhaltungskünstler<br/>
+      Die Tätigkeit unterliegt keiner spezifischen Berufszulassung oder berufsrechtlichen Regulierung.</p>
+
+      <p><strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</strong><br/>
+      Nicolas Käufer<br/>
+      Bremerhaven, Deutschland<br/>
+      E-Mail: <a href="mailto:nicolas@zauberer.jetzt">nicolas@zauberer.jetzt</a></p>
+
+      <p><strong>Streitschlichtung</strong><br/>
+      Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.<br/>
+      Zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle bin ich nicht verpflichtet und nicht bereit.</p>
+
+      <p><strong>Haftung für Inhalte</strong><br/>
+      Als Diensteanbieter bin ich gemäß § 7 Abs. 1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG bin ich als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+
+      <p><strong>Haftung für Links</strong><br/>
+      Diese Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar.</p>
+
+      <p><strong>Urheberrecht</strong><br/>
+      Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Beiträge Dritter sind als solche gekennzeichnet. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
     </div>
   </div>
 
   <!-- ===================== DATENSCHUTZ MODAL ===================== -->
-  <div class="modal" id="datenschutzModal">
+  <div class="modal modal-large" id="datenschutzModal">
     <div class="modal-content">
       <button class="modal-close" id="closeDatenschutz">&times;</button>
       <h2>Datenschutzerklärung</h2>
-      <p>Die Nutzung dieser Website ist ohne Angabe personenbezogener Daten möglich. Soweit auf dieser Website personenbezogene Daten erhoben werden, erfolgt dies auf freiwilliger Basis. Diese Daten werden ohne deine ausdrückliche Zustimmung nicht an Dritte weitergegeben.</p>
-      <p>Wir weisen darauf hin, dass die Datenübertragung im Internet Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.</p>
-      <p><em>Bitte ergänze eine vollständige Datenschutzerklärung gemäß DSGVO.</em></p>
+
+      <p><strong>1. Verantwortlicher</strong><br/>
+      Nicolas Käufer, Bremerhaven, Deutschland<br/>
+      E-Mail: <a href="mailto:nicolas@zauberer.jetzt">nicolas@zauberer.jetzt</a><br/>
+      Telefon: +49 156 78469675</p>
+
+      <p><strong>2. Erhebung und Speicherung personenbezogener Daten</strong><br/>
+      Beim Besuch dieser Website werden automatisch Informationen allgemeiner Natur erfasst (sog. Server-Log-Dateien), die durch den Browser übermittelt werden. Dazu gehören: Browsertyp und -version, verwendetes Betriebssystem, Referrer-URL, Hostname des zugreifenden Rechners sowie Uhrzeit der Serveranfrage. Diese Daten sind nicht bestimmten Personen zuordbar und werden nicht mit anderen Datenquellen zusammengeführt.</p>
+
+      <p><strong>3. Kontaktformular und Bewertungen</strong><br/>
+      Wenn Sie das Kontaktformular nutzen oder eine Bewertung hinterlassen, werden die eingegebenen Daten (Name, E-Mail-Adresse, Nachrichteninhalt) ausschließlich zur Bearbeitung Ihrer Anfrage verwendet. Bewertungen werden lokal im Browser gespeichert (localStorage) und nicht an externe Server übertragen. Eine Weitergabe an Dritte erfolgt nicht.</p>
+
+      <p><strong>4. Cookies und localStorage</strong><br/>
+      Diese Website verwendet keine Tracking-Cookies. Für die Bewertungsfunktion wird der lokale Browserspeicher (localStorage) genutzt, um eingegebene Bewertungen im Browser zu speichern. Diese Daten verbleiben ausschließlich auf Ihrem Gerät und werden nicht übertragen.</p>
+
+      <p><strong>5. Hosting</strong><br/>
+      Diese Website wird über GitHub Pages (GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA) gehostet. Beim Aufruf der Website können personenbezogene Daten (insbesondere IP-Adressen) an GitHub übertragen werden. Weitere Informationen finden Sie in der Datenschutzerklärung von GitHub: <a href="https://docs.github.com/de/site-policy/privacy-policies/github-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a>.</p>
+
+      <p><strong>6. Ihre Rechte</strong><br/>
+      Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer personenbezogenen Daten sowie das Recht auf Datenübertragbarkeit. Zur Geltendmachung Ihrer Rechte wenden Sie sich bitte an: <a href="mailto:nicolas@zauberer.jetzt">nicolas@zauberer.jetzt</a>.</p>
+
+      <p><strong>7. Beschwerderecht</strong><br/>
+      Sie haben das Recht, sich bei einer Datenschutz-Aufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen Daten zu beschweren. Die zuständige Aufsichtsbehörde in Deutschland ist der jeweilige Landesbeauftragte für den Datenschutz.</p>
+
+      <p><strong>8. Aktualität dieser Datenschutzerklärung</strong><br/>
+      Diese Datenschutzerklärung ist aktuell gültig und hat den Stand April 2025.</p>
     </div>
   </div>
 

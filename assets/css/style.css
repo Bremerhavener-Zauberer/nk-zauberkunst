@@ -1253,3 +1253,157 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .kontakt-form-wrap { padding: 1.4rem; }
   .modal { padding: 2rem 1.5rem; }
 }
+
+/* =====================================================
+   BEWERTUNGS-SYSTEM
+   ===================================================== */
+
+/* Bewertungs-Sektion */
+.bewertung-section { margin-top: 1rem; }
+
+.bewertung-form {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-dim);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+}
+
+/* Sterne-Picker */
+.star-picker {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.star-btn {
+  font-size: 2rem;
+  color: var(--color-text-dim);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.15rem;
+  transition: color var(--transition), transform var(--transition);
+  line-height: 1;
+}
+.star-btn:hover,
+.star-btn.active {
+  color: var(--color-gold);
+  transform: scale(1.18);
+}
+.star-btn.selected { color: var(--color-gold); }
+
+/* Zeichenzähler */
+.char-counter {
+  display: block;
+  text-align: right;
+  font-size: 0.72rem;
+  color: var(--color-text-dim);
+  margin-top: 0.35rem;
+}
+
+/* Dynamische Bewertungskarten */
+#userReviewsGrid .referenz-card {
+  animation: reviewFadeIn 0.5s ease forwards;
+}
+@keyframes reviewFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Bewertungs-Datum */
+.referenz-date {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-text-dim);
+  margin-top: 0.2rem;
+}
+
+/* Anlass-Tag */
+.referenz-anlass {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: rgba(139,92,246,0.1);
+  border: 1px solid var(--color-border);
+  border-radius: 50px;
+  padding: 0.2rem 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Leere Bewertungs-Nachricht */
+.no-reviews-msg {
+  text-align: center;
+  color: var(--color-text-dim);
+  font-size: 0.9rem;
+  font-style: italic;
+  padding: 2rem 0;
+  grid-column: 1 / -1;
+}
+
+/* Gesamt-Bewertungs-Zusammenfassung */
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-dim);
+  border-radius: var(--radius);
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.rating-avg {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  line-height: 1;
+}
+.rating-info { flex: 1; min-width: 120px; }
+.rating-stars-row { color: var(--color-gold); font-size: 1.2rem; letter-spacing: 0.08em; }
+.rating-count { font-size: 0.78rem; color: var(--color-text-dim); margin-top: 0.3rem; }
+
+/* =====================================================
+   GROSSE MODALS (Impressum / Datenschutz)
+   ===================================================== */
+.modal-large {
+  max-width: 720px;
+  max-height: 88vh;
+}
+.modal-large h2 {
+  margin-bottom: 1.8rem;
+}
+.modal-large p {
+  margin-bottom: 1.2rem;
+  font-size: 0.88rem;
+  line-height: 1.85;
+}
+.modal-large strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.modal-large a {
+  color: var(--color-primary-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.modal-note {
+  background: rgba(139,92,246,0.07);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.9rem 1.2rem !important;
+  color: var(--color-text-muted) !important;
+  font-size: 0.82rem !important;
+  line-height: 1.7 !important;
+}
+
+/* Responsive Bewertungsformular */
+@media (max-width: 768px) {
+  .bewertung-form { padding: 1.6rem; }
+  .star-btn { font-size: 1.7rem; }
+  .rating-summary { flex-direction: column; gap: 0.8rem; text-align: center; }
+}
