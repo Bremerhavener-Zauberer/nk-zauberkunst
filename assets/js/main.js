@@ -1,5 +1,5 @@
 /* =====================================================
-   NK ZAUBERKUNST & HYPNOSE – MAIN JAVASCRIPT
+   NK ZAUBERKUNST – MAIN JAVASCRIPT
    Nicolas Käufer | Interactive Features
    ===================================================== */
 
@@ -8,11 +8,7 @@
 /* ---- NAVBAR SCROLL EFFECT ---- */
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 60) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
 }, { passive: true });
 
 /* ---- MOBILE NAV TOGGLE ---- */
@@ -25,7 +21,6 @@ navToggle.addEventListener('click', () => {
   document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
 });
 
-// Close nav on link click
 navLinks.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', () => {
     navToggle.classList.remove('open');
@@ -51,18 +46,15 @@ const observerNav = new IntersectionObserver((entries) => {
 sections.forEach(s => observerNav.observe(s));
 
 /* ---- SCROLL REVEAL ---- */
-const revealElements = document.querySelectorAll(
-  '.section-header, .about-grid, .leistung-card, .zielgruppe-card, .galerie-item, .referenz-card, .faq-item, .kontakt-grid, .stat-item'
+const revealTargets = document.querySelectorAll(
+  '.section-header, .about-grid, .leistung-card, .zielgruppe-card, .referenz-card, .faq-item, .kontakt-grid, .stat-item'
 );
 
-revealElements.forEach((el, i) => {
+revealTargets.forEach((el, i) => {
   el.classList.add('reveal');
-  // Stagger children of grids
-  if (el.parentElement && el.parentElement.children.length > 1) {
-    const siblings = Array.from(el.parentElement.children);
-    const idx = siblings.indexOf(el);
-    if (idx < 4) el.classList.add(`reveal-delay-${idx}`);
-  }
+  const siblings = Array.from(el.parentElement.children);
+  const idx = siblings.indexOf(el);
+  if (idx > 0 && idx < 4) el.classList.add(`reveal-delay-${idx}`);
 });
 
 const revealObserver = new IntersectionObserver((entries) => {
@@ -72,34 +64,24 @@ const revealObserver = new IntersectionObserver((entries) => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, { rootMargin: '0px 0px -80px 0px', threshold: 0.05 });
+}, { rootMargin: '0px 0px -70px 0px', threshold: 0.05 });
 
-revealElements.forEach(el => revealObserver.observe(el));
+revealTargets.forEach(el => revealObserver.observe(el));
 
 /* ---- HERO PARTICLES ---- */
 function createParticles() {
   const container = document.getElementById('particles');
   if (!container) return;
-
-  const count = 30;
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < 28; i++) {
     const p = document.createElement('div');
     p.classList.add('particle');
-
-    const size = Math.random() * 4 + 1;
-    const left = Math.random() * 100;
-    const delay = Math.random() * 12;
-    const duration = Math.random() * 10 + 8;
-    const opacity = Math.random() * 0.5 + 0.1;
-
+    const size = Math.random() * 3.5 + 1;
     p.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
-      left: ${left}%;
-      bottom: -10px;
-      animation-delay: ${delay}s;
-      animation-duration: ${duration}s;
-      opacity: ${opacity};
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      bottom:-10px;
+      animation-delay:${Math.random()*14}s;
+      animation-duration:${Math.random()*10+8}s;
     `;
     container.appendChild(p);
   }
@@ -111,11 +93,7 @@ document.querySelectorAll('.faq-question').forEach(btn => {
   btn.addEventListener('click', () => {
     const item = btn.closest('.faq-item');
     const isOpen = item.classList.contains('open');
-
-    // Close all
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-
-    // Toggle current
     if (!isOpen) item.classList.add('open');
   });
 });
@@ -127,44 +105,32 @@ const formSuccess = document.getElementById('formSuccess');
 if (form) {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-
     const btn = form.querySelector('button[type="submit"]');
+    const span = btn.querySelector('span');
     btn.disabled = true;
-    btn.querySelector('span').textContent = 'Wird gesendet…';
+    span.textContent = 'Wird gesendet…';
 
-    // Simulate sending (replace with real backend/Formspree/Netlify Forms)
     setTimeout(() => {
       form.reset();
       btn.disabled = false;
-      btn.querySelector('span').textContent = 'Anfrage senden';
+      span.textContent = 'Nachricht senden';
       formSuccess.classList.add('visible');
-
-      setTimeout(() => {
-        formSuccess.classList.remove('visible');
-      }, 6000);
+      setTimeout(() => formSuccess.classList.remove('visible'), 6000);
     }, 1500);
   });
 }
 
 /* ---- BACK TO TOP ---- */
 const backToTop = document.getElementById('backToTop');
-
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 400) {
-    backToTop.classList.add('visible');
-  } else {
-    backToTop.classList.remove('visible');
-  }
+  backToTop.classList.toggle('visible', window.scrollY > 400);
 }, { passive: true });
-
-backToTop.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 /* ---- MODALS ---- */
-const backdrop = document.getElementById('modalBackdrop');
-const impressumModal    = document.getElementById('impressumModal');
-const datenschutzModal  = document.getElementById('datenschutzModal');
+const backdrop        = document.getElementById('modalBackdrop');
+const impressumModal  = document.getElementById('impressumModal');
+const datenschutzModal = document.getElementById('datenschutzModal');
 
 function openModal(modal) {
   modal.classList.add('active');
@@ -177,66 +143,45 @@ function closeAllModals() {
   document.body.style.overflow = '';
 }
 
-document.getElementById('impressumLink').addEventListener('click', (e) => {
-  e.preventDefault();
-  openModal(impressumModal);
-});
-document.getElementById('datenschutzLink').addEventListener('click', (e) => {
-  e.preventDefault();
-  openModal(datenschutzModal);
-});
-document.querySelectorAll('[href="#datenschutz"]').forEach(a => {
-  a.addEventListener('click', (e) => {
-    e.preventDefault();
-    openModal(datenschutzModal);
-  });
-});
+document.getElementById('impressumLink').addEventListener('click', (e) => { e.preventDefault(); openModal(impressumModal); });
+document.getElementById('datenschutzLink').addEventListener('click', (e) => { e.preventDefault(); openModal(datenschutzModal); });
+
+// Datenschutz trigger inside form
+const dsTrigger = document.getElementById('datenschutzTrigger');
+if (dsTrigger) dsTrigger.addEventListener('click', (e) => { e.preventDefault(); openModal(datenschutzModal); });
 
 document.getElementById('closeImpressum').addEventListener('click', closeAllModals);
 document.getElementById('closeDatenschutz').addEventListener('click', closeAllModals);
 backdrop.addEventListener('click', closeAllModals);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeAllModals();
-});
-
-/* ---- SMOOTH SCROLL for anchor links ---- */
+/* ---- SMOOTH SCROLL ---- */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
-    const target = document.querySelector(this.getAttribute('href'));
+    const href = this.getAttribute('href');
+    if (href === '#' || href.length < 2) return;
+    const target = document.querySelector(href);
     if (target) {
       e.preventDefault();
-      const offset = 80;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      const top = target.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   });
 });
 
 /* ---- COUNTER ANIMATION ---- */
-function animateCounter(el, target, suffix = '') {
-  let current = 0;
-  const isText = isNaN(parseInt(target));
-  if (isText) { el.textContent = target; return; }
-
-  const num = parseInt(target);
-  const step = Math.ceil(num / 60);
-  const interval = setInterval(() => {
-    current = Math.min(current + step, num);
-    el.textContent = current + suffix;
-    if (current >= num) clearInterval(interval);
-  }, 20);
-}
-
 const statsObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      const numbers = entry.target.querySelectorAll('.stat-number');
-      numbers.forEach(n => {
+      entry.target.querySelectorAll('.stat-number').forEach(n => {
         const text = n.textContent.trim();
-        if (text === '500+') animateCounter(n, 500, '+');
-        else if (text === '100%') animateCounter(n, 100, '%');
-        else n.textContent = text;
+        if (text === '500+') {
+          let c = 0;
+          const iv = setInterval(() => { c = Math.min(c + 9, 500); n.textContent = c + '+'; if (c >= 500) clearInterval(iv); }, 20);
+        } else if (text === '100%') {
+          let c = 0;
+          const iv = setInterval(() => { c = Math.min(c + 2, 100); n.textContent = c + '%'; if (c >= 100) clearInterval(iv); }, 20);
+        }
       });
       statsObserver.unobserve(entry.target);
     }
@@ -246,65 +191,16 @@ const statsObserver = new IntersectionObserver((entries) => {
 const statsSection = document.querySelector('.about-stats');
 if (statsSection) statsObserver.observe(statsSection);
 
-/* ---- GALERIE LIGHTBOX (simple) ---- */
-const galerieItems = document.querySelectorAll('.galerie-item');
-
-galerieItems.forEach(item => {
-  item.addEventListener('click', () => {
-    const img = item.querySelector('img');
-    const label = item.querySelector('.galerie-overlay span');
-
-    const lightbox = document.createElement('div');
-    lightbox.style.cssText = `
-      position: fixed; inset: 0; z-index: 3000;
-      background: rgba(0,0,0,0.92);
-      display: flex; align-items: center; justify-content: center;
-      cursor: zoom-out; padding: 2rem;
-      backdrop-filter: blur(10px);
-      animation: fadeIn 0.2s ease;
-    `;
-
-    const style = document.createElement('style');
-    style.textContent = `@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }`;
-    document.head.appendChild(style);
-
-    const inner = document.createElement('div');
-    inner.style.cssText = 'text-align: center; max-width: 90vw;';
-
-    const imgEl = document.createElement('img');
-    imgEl.src = img.src;
-    imgEl.alt = img.alt;
-    imgEl.style.cssText = 'max-height: 80vh; max-width: 100%; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);';
-
-    const caption = document.createElement('p');
-    caption.textContent = label ? label.textContent : '';
-    caption.style.cssText = 'color: rgba(255,255,255,0.6); margin-top: 1rem; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase;';
-
-    inner.appendChild(imgEl);
-    inner.appendChild(caption);
-    lightbox.appendChild(inner);
-    document.body.appendChild(lightbox);
-    document.body.style.overflow = 'hidden';
-
-    lightbox.addEventListener('click', () => {
-      lightbox.remove();
-      document.body.style.overflow = '';
-    });
-  });
-});
-
-/* ---- CURSOR GLOW EFFECT (subtle) ---- */
+/* ---- SUBTLE CURSOR GLOW ---- */
 const glow = document.createElement('div');
 glow.style.cssText = `
-  position: fixed; pointer-events: none; z-index: 9999;
-  width: 300px; height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: left 0.15s ease, top 0.15s ease;
+  position:fixed; pointer-events:none; z-index:9999;
+  width:280px; height:280px; border-radius:50%;
+  background:radial-gradient(circle, rgba(139,92,246,0.055) 0%, transparent 70%);
+  transform:translate(-50%,-50%);
+  transition:left 0.12s ease, top 0.12s ease;
 `;
 document.body.appendChild(glow);
-
 document.addEventListener('mousemove', (e) => {
   glow.style.left = e.clientX + 'px';
   glow.style.top  = e.clientY + 'px';
